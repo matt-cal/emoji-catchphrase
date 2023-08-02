@@ -16,7 +16,7 @@ get("/api/test").then((res) => {
 router.get("/test", (req, res) => {
 	res.send({
 		message: "WORKING"
-	})
+	});
 });
 
 module.exports = router;
