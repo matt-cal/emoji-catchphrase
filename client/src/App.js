@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Link, Router } from "@reach/router"
 
 import HomePage from './pages/HomePage';
+import Chat from './pages/Chat';
 
 class App extends Component {
 state = {
@@ -26,12 +26,13 @@ state = {
     return body;
   };
 
-  
+
   render() {
     return (
       <>
         <Router>
           <HomePage path="/" exapmle={"example"}/>
+          <Chat path="/chat"/>
         </Router>
       </>
     );
