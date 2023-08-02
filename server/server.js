@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
 
+// connect to user-defined routes in api.js
+const api = require("./api");
+app.use("/api", api);
+
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
