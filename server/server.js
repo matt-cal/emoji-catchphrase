@@ -12,8 +12,17 @@ const api = require("./api");
 app.use("/api", api);
 
 io.on("connection", (socket) => {
-	socket.on("new-message", (message) => {
-		socket.broadcast.emit("new-message", message);
+	socket.on("new-message", (message, room) => {
+		if (room) {
+			socket.to(room).emit("new-message", message);
+		} else {
+			socket.broadcast.emit("new-message", message);
+		}
+	});
+
+	// TODO: may need to leave rooms before joining new rooms with socket.leave(room)
+	socket.on("join-room", (room) => {
+		socket.join(room);
 	});
 });
   
