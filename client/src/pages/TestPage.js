@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./TestPage.css";
 import { get, post } from "../utilities.js";
 import { socket } from "../client-socket.js";
@@ -44,7 +44,7 @@ const TestPage = (props) => {
 	// emoji keyboard component
 	function EmojiKeyboard() {
 		if (emojiPickerVisible) {
-			return <EmojiPicker className="emoji-picker" onEmojiClick={(emoji, e) => addEmoji(emoji, e)} height={360} width="50%" />
+			return <EmojiPicker className="emoji-picker" onEmojiClick={(emoji, e) => addEmoji(emoji, e)} height={360} width="50%" emojiVersion={"3.0"}/>
 		}
 	}
 
@@ -104,14 +104,26 @@ const TestPage = (props) => {
 		setMessages([...messages, "Your Partner Started The Game! Start Guessing Their Phrase!"]);
 	});
 
+
+	const latestMessage = useRef(null);
+	// scroll to bottom every time a message is added
+	useEffect(() => {
+		if (latestMessage.current) {
+			console.log("scrolling");
+			latestMessage.current.scrollIntoView({behavior: "smooth"});
+		}
+	}, [messages]);
+
 	return (
 		<div className="test-page-container">
 			<h1>Test Page</h1>
 
 			<ul className="messages">
-				{messages.map(message => {
-					return <li>{message}</li>
+				{messages.map((message, i) => {
+					return <li key={i}>{message}</li>
 				})}
+				{/* dummy element to scroll to */}
+				<li ref={latestMessage}></li> 
 			</ul>
 
 			<EmojiKeyboard />
