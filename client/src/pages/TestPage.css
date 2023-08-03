@@ -1,6 +1,7 @@
-#messages {
+.messages {
 	height: 400px;
 	overflow: scroll;
+	list-style-type: none;
 }
 
 #input {
@@ -18,4 +19,8 @@
 
 .test-page-container {
 	margin: 10px;
+}
+
+li {
+	margin: 16px 0;
 }
