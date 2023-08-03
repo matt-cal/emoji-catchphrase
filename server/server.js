@@ -23,10 +23,11 @@ io.on("connection", (socket) => {
 	// TODO: may need to leave rooms before joining new rooms with socket.leave(room)
 	socket.on("join-room", async (room) => {
 		socket.join(room);
-		console.log(socket.rooms);
-		let socks = await io.in(room).fetchSockets();
-		socks = socks.map((s) => s.id);
-		console.log(socks)
+		
+		// console.log(socket.rooms);
+		// let socks = await io.in(room).fetchSockets();
+		// socks = socks.map((s) => s.id);
+		// console.log(socks)
 	});
 
 	socket.on("correct-guess", (room) => {
@@ -40,6 +41,12 @@ io.on("connection", (socket) => {
 			socket.to(room).emit("give-up");
 		}
 	});
+
+	socket.on("start-game", (room) => {
+		if (room) {
+			socket.to(room).emit("start-game");
+		}
+	})
 });
   
 httpServer.listen(port, () => console.log(`Listening on port ${port}`));

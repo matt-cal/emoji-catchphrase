@@ -12,6 +12,7 @@ const TestPage = (props) => {
 	const [emojiPickerVisible, setEmojiPicker] = useState(false);
 	const [messageInputHidden, setMessageInputHidden] = useState(false);
 	const [gameButtonsHidden, setGameButtonsHidden] = useState(true);
+	const [startGameHidden, setStartGameHidden] = useState(false);
 
 	// adds message to personal feed; emits message to others connected to same room
 	function addMessage(e) {
@@ -48,17 +49,13 @@ const TestPage = (props) => {
 	}
 
 	// gives player a new phrase; toggles emoji keyboard for only them
-	function newPhrase(initial=false) {
+	function newPhrase() {
 		setEmojiPicker(true);
 		setMessageInputHidden(true);
 		setGameButtonsHidden(false);
 		get("/api/phrase").then((res) => {
 			setMessages([...messages, `Your Phrase is: ${res.phrase}`]);
 		});
-		console.log("emitting new phrase");
-		if (initial) {
-			socket.emit("new-message", "Your Partner Got A New Phrase. Start Guessing!", roomID);
-		}
 	}
 
 	// called when other player correctly guesses phrase
@@ -87,11 +84,24 @@ const TestPage = (props) => {
 		setGameButtonsHidden(true);
 		socket.emit("new-message", "Your Partner Gave Up. Your Turn!", roomID);
 		socket.emit("give-up", roomID);
+		setMessages([...messages, "You gave up. Now it's your partner's turn!"]);
 	}
 
 	// received when partner gave up
 	socket.on("give-up", () => {
 		newPhrase();
+	});
+
+	function startGame() {
+		newPhrase();
+		setStartGameHidden(true);
+		socket.emit("start-game", roomID);
+	}
+
+	// received when partner starts game
+	socket.on("start-game", () => {
+		setStartGameHidden(true);
+		setMessages([...messages, "Your Partner Started The Game! Start Guessing Their Phrase!"]);
 	});
 
 	return (
@@ -116,7 +126,7 @@ const TestPage = (props) => {
 				<button id="submit" onClick={submitRoom}>Set Room</button>
 			</div>
 
-			<button onClick={() => newPhrase(true)}>Get New Phrase</button>
+			<button onClick={startGame} hidden={startGameHidden}>Start Game</button>
 			<button onClick={correct} hidden={gameButtonsHidden}>Correct!</button>
 			<button onClick={giveUp} hidden={gameButtonsHidden}>Give Up</button>
 		</div>
