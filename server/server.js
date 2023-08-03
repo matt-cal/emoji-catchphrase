@@ -21,8 +21,24 @@ io.on("connection", (socket) => {
 	});
 
 	// TODO: may need to leave rooms before joining new rooms with socket.leave(room)
-	socket.on("join-room", (room) => {
+	socket.on("join-room", async (room) => {
 		socket.join(room);
+		console.log(socket.rooms);
+		let socks = await io.in(room).fetchSockets();
+		socks = socks.map((s) => s.id);
+		console.log(socks)
+	});
+
+	socket.on("correct-guess", (room) => {
+		if (room) {
+			socket.to(room).emit("correct-guess");
+		}
+	});
+
+	socket.on("give-up", (room) => {
+		if (room) {
+			socket.to(room).emit("give-up");
+		}
 	});
 });
   
