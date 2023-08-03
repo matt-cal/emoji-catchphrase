@@ -36,7 +36,6 @@ const TestPage = (props) => {
 	return (
 		<div className="test-page-container">
 			<h1>Test Page</h1>
-			{/* <pre className="messages">{messages}</pre> */}
 
 			<ul className="messages">
 				{messages.map(message => {
