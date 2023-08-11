@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./TestPage.css";
 import { get, post } from "../utilities.js";
 import { socket } from "../client-socket.js";
-import EmojiPicker from 'emoji-picker-react';
-
+import EmojiPicker from "emoji-picker-react";
 
 const TestPage = (props) => {
 	const [inputValue, setInput] = useState("");
@@ -44,7 +43,15 @@ const TestPage = (props) => {
 	// emoji keyboard component
 	function EmojiKeyboard() {
 		if (emojiPickerVisible) {
-			return <EmojiPicker className="emoji-picker" onEmojiClick={(emoji, e) => addEmoji(emoji, e)} height={360} width="50%" emojiVersion={"3.0"}/>
+			return (
+				<EmojiPicker
+					className="emoji-picker"
+					onEmojiClick={(emoji, e) => addEmoji(emoji, e)}
+					height={360}
+					width="75%"
+					emojiVersion={"3.0"}
+				/>
+			);
 		}
 	}
 
@@ -68,7 +75,10 @@ const TestPage = (props) => {
 		setGameButtonsHidden(true);
 		socket.emit("new-message", "You Guessed Correctly!", roomID);
 		socket.emit("correct-guess", roomID);
-		setMessages([...messages, "Your Partner Got A New Phrase. Start Guessing!"]);
+		setMessages([
+			...messages,
+			"Your Partner Got A New Phrase. Start Guessing!",
+		]);
 	}
 
 	// received when this client made a correct guess
@@ -84,7 +94,10 @@ const TestPage = (props) => {
 		setGameButtonsHidden(true);
 		socket.emit("new-message", "Your Partner Gave Up. Your Turn!", roomID);
 		socket.emit("give-up", roomID);
-		setMessages([...messages, "You gave up. Now it's your partner's turn!"]);
+		setMessages([
+			...messages,
+			"You gave up. Now it's your partner's turn!",
+		]);
 	}
 
 	// received when partner gave up
@@ -101,16 +114,18 @@ const TestPage = (props) => {
 	// received when partner starts game
 	socket.on("start-game", () => {
 		setStartGameHidden(true);
-		setMessages([...messages, "Your Partner Started The Game! Start Guessing Their Phrase!"]);
+		setMessages([
+			...messages,
+			"Your Partner Started The Game! Start Guessing Their Phrase!",
+		]);
 	});
-
 
 	const latestMessage = useRef(null);
 	// scroll to bottom every time a message is added
 	useEffect(() => {
 		if (latestMessage.current) {
 			console.log("scrolling");
-			latestMessage.current.scrollIntoView({behavior: "smooth"});
+			latestMessage.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}, [messages]);
 
@@ -120,27 +135,51 @@ const TestPage = (props) => {
 
 			<ul className="messages">
 				{messages.map((message, i) => {
-					return <li key={i}>{message}</li>
+					return <li key={i}>{message}</li>;
 				})}
 				{/* dummy element to scroll to */}
-				<li ref={latestMessage}></li> 
+				<li ref={latestMessage}></li>
 			</ul>
 
 			<EmojiKeyboard />
 
 			<div hidden={messageInputHidden}>
 				<form onSubmit={(e) => addMessage(e)}>
-					<input type="text" id="input" placeholder="Message" value={inputValue} onChange={(e) => setInput(e.target.value)}/>
-					<input type="submit" id="submit" title="Send Message"></input>
+					<input
+						type="text"
+						id="input"
+						placeholder="Message"
+						value={inputValue}
+						onChange={(e) => setInput(e.target.value)}
+					/>
+					<input
+						type="submit"
+						id="submit"
+						title="Send Message"
+					></input>
 				</form>
 
-				<input type="text" id="input" placeholder="Room ID" value={roomID} onChange={(e) => setRoom(e.target.value)}/>
-				<button id="submit" onClick={submitRoom}>Set Room</button>
+				<input
+					type="text"
+					id="input"
+					placeholder="Room ID"
+					value={roomID}
+					onChange={(e) => setRoom(e.target.value)}
+				/>
+				<button id="submit" onClick={submitRoom}>
+					Set Room
+				</button>
 			</div>
 
-			<button onClick={startGame} hidden={startGameHidden}>Start Game</button>
-			<button onClick={correct} hidden={gameButtonsHidden}>Correct!</button>
-			<button onClick={giveUp} hidden={gameButtonsHidden}>Give Up</button>
+			<button onClick={startGame} hidden={startGameHidden}>
+				Start Game
+			</button>
+			<button onClick={correct} hidden={gameButtonsHidden}>
+				Correct!
+			</button>
+			<button onClick={giveUp} hidden={gameButtonsHidden}>
+				Give Up
+			</button>
 		</div>
 	);
 };
